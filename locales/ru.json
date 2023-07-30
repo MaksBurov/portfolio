@@ -1,0 +1,28 @@
+{
+  "navigation-home": "Главная",
+  "navigation-about": "Обо мне",
+  "navigation-works": "Работы",
+  "navigation-contacts": "Контакты",
+
+  "title-about": "Обо мне",
+  "personal-info": "Персональная информация",
+  "full-name": "Полное имя",
+  "full-name-label": "Буров Максив Иванович",
+  "date-of-birth": "Дата рождения",
+  "date-of-birth-label": "14.08.1996",
+  "city": "Город",
+  "city-label": "г. Иваново",
+  "brief-info": "Краткая информация",
+  "brief-info-desc": "Какое-то описание",
+
+  "write-a-letter": "Написать Письмо",
+  "name": "Имя",
+  "phone": "Телефон",
+  "message": "Сообщение",
+  "entry-your-name": "Введите Ваше имя",
+  "entry-your-email": "Введите Ваш E-mail",
+  "entry-your-phone": "Введите Ваш телефон",
+  "entry-messege": "Введите сообщение",
+  "send": "Отправить"
+
+}

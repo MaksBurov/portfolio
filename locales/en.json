@@ -1,0 +1,18 @@
+{
+    "navigation-home": "Home",
+    "navigation-about": "About",
+    "navigation-works": "Works",
+    "navigation-contacts": "Contacts",
+
+    "title-about": "About",
+
+    "write-a-letter": "Write a letter",
+    "name": "Name",
+    "phone": "Phone",
+    "message": "Message",
+    "entry-your-name": "Entry your name",
+    "entry-your-email": "Entry your email",
+    "entry-your-phone": "Entry your phone",
+    "entry-messege": "Entry-messege",
+    "send": "Send"
+  }

@@ -1,0 +1,84 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: unset;
+}
+
+button,
+input,
+textarea {
+  border: unset;
+  background-color: unset;
+  color: inherit;
+}
+
+/*a,
+input,
+button {
+    appearance: none;
+}*/
+
+:root {
+  font-size: 18px;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased; //Отключение субпиксельного сглаживания на MacOS
+  background-color: var(--color-bg-primary);
+  font-family: "Roboto", sans-serif;
+  color: var(--color-text-secondary);
+  line-height: 1.5em;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 1.25em 0 0.75em;
+  //   line-height: calc(1em + 0.5rem);
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+  line-height: 1.2;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.container {
+  max-width: 1240px;
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+#__nuxt {
+  display: grid;
+  grid-template-columns: 100%;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  min-height: 100vh;
+}
+
+// .card {
+//     padding: 0.5em 1em;
+//     border-radius: 15px;
+//     background-color: var(--color-bg-secondary);
+// }

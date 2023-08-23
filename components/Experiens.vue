@@ -1,129 +1,223 @@
 <template>
   <div>
     <h2 class="title">Experiens</h2>
-    <!-- 
-    <label class="switch">
-      <input type="checkbox" />
-      <span class="slider round"></span>
-    </label> -->
+
+    <button @click="() => test(null)">test</button>
 
     <div class="custom-container parent-block">
       <ul class="time-block">
-        <li class="time-segment" v-for="item in timeArray" :key="item.year" :style="{ height: item.height }">
+        <li
+          class="time-segment"
+          v-for="year in timelineArray"
+          :key="year"
+          :style="{
+            height: `${(dataByYears.get(year)?.heightPerMonth ?? 0.5) * 12}em`,
+          }"
+          @click="() => test(dataByYears.get(year))"
+        >
           <div class="time-line"></div>
-          <div class="time-dot" v-if="item.isVisibleYear">{{ item.year }}</div>
-        </li>
-      </ul>
-      <div class="cards-container">
-        <ul class="educations-container">
-          <li class="card" :style="{ top: '0', height: '180px' }">
-            <h5 class="education-title">
-              Ивановский государственный энергетический университет им. В.И.
-              Ленина
+          <div class="time-dot">{{ year }}</div>
+
+          <div
+            v-for="item in dataByYears.get(year)?.data"
+            :key="item.id"
+            :class="'card  card--'+item.type"
+            :style="getStyles(item)"
+          >
+            <h5 class="education-title" v-if="!!item.name">
+              {{ item.name }}
             </h5>
             <p class="education-speciality">
-              Информатики и вычислительной техники, Управление и информатика в
-              технических системах
+              {{ item.position }}
             </p>
-          </li>
-        </ul>
-        <ul class="work-container">
-          <li class="card" :style="{ top: 'calc(180px)', height: '260px' }">
-            <h5 class="company-title">
-              МУ "Управление административными зданиями и транспортом"
-            </h5>
-            <p class="company-position">Системный администратор</p>
-          </li>
-          <li class="card" :style="{ top: 'calc(180px + 260px + 5px)', height: '80px' }">
-            <h5 class="company-title">VladIT</h5>
-            <p class="company-position">FrontEnd разработчик</p>
-          </li>
-          <li class="card" :style="{
-            top: 'calc(180px + 260px + 5px + 80px + 5px)',
-            height: '140px',
-          }">
-            <h5 class="company-title">Involta</h5>
-            <p class="company-position">FrontEnd разработчик</p>
-          </li>
-          <li class="card" :style="{
-            top: 'calc(180px + 260px + 5px + 80px + 5px + 140px + 5px)',
-            height: '215px',
-          }">
-            <h5 class="company-title">СО "ЕЭС"</h5>
-            <p class="company-position">FrontEnd разработчик</p>
-          </li>
-        </ul>
-      </div>
+          </div>
+
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script setup>
-const timeArray = ref([
+const data =  [
   {
-    year: 2017,
-    height: '100px',
-    isVisibleYear: false,
+    id: "educ1",
+    type: "education",
+    name: "Ивановский государственный энергетический университет им. В.И. Ленина",
+    position:
+      "Информатики и вычислительной техники, Управление и информатика в технических системах",
+    dateStart: "09.2014",
+    dateEnd: "08.2018",
   },
   {
-    year: 2018,
-    height: '150px',
-    isVisibleYear: true,
+    id: "educ2",
+    type: "education",
+    // name: "School",
+    position: "Vue для начинающих",
+    dateStart: "11.2020",
+    dateEnd: "12.2020",
   },
   {
-    year: 2019,
-    height: '100px',
-    isVisibleYear: true,
+    id: "work1",
+    type: "work",
+    name: 'МУ "Управление административными зданиями и транспортом"',
+    position: "Системный администратор",
+    dateStart: "08.2018",
+    dateEnd: "09.2020",
   },
   {
-    year: 2020,
-    height: '150px',
-    isVisibleYear: true,
+    id: "work2",
+    type: "work",
+    name: "VladIT",
+    position: "FrontEnd разработчик",
+    dateStart: "09.2020",
+    dateEnd: "01.2021",
   },
   {
-    year: 2021,
-    height: '150px',
-    isVisibleYear: true,
+    id: "work3",
+    type: "work",
+    name: "Involta",
+    position: "FrontEnd разработчик",
+    dateStart: "01.2021",
+    dateEnd: "01.2022",
   },
   {
-    year: 2022,
-    height: '150px',
-    isVisibleYear: true,
+    id: "work4",
+    type: "work",
+    name: 'СО "ЕЭС"',
+    position: "FrontEnd разработчик",
+    dateStart: "01.2022",
+    dateEnd: "UNTIL_NOW",
   },
-  {
-    year: 2023,
-    height: '90px',
-    isVisibleYear: true,
-  },
-])
-</script>
+];
 
+const timelineArray = ref([]);
+let minYear = data[0].dateStart.split(".")[1];
+let maxYear = data[0].dateEnd.split(".")[1];
+
+const dataByYears = computed(() => {
+  const years = new Map();
+
+  const getHeight = (start, end) => {
+    const [monthStart, yearStart] = start.split(".");
+    const [monthEnd, yearEnd] = end?.split(".");
+
+    if (yearStart === yearEnd) {
+      if (monthEnd - monthStart > 2) return 1;
+      if (monthEnd - monthStart === 2) return 1.5;
+      return 1.5;
+    } else if (yearEnd - yearStart === 1) {
+      if (12 - monthStart + +monthEnd > 2) return 1;
+      if (12 - monthStart + +monthEnd === 2) return 1.5;
+    } else return 0.5;
+  };
+
+  for (const ExperiensItem of data) {
+    const year = ExperiensItem.dateStart.split(".")[1];
+
+    if (!years.has(year)) {
+      years.set(year, {
+        heightPerMonth: getHeight(
+          ExperiensItem.dateStart,
+          ExperiensItem.dateEnd
+        ),
+        data: [ExperiensItem],
+      });
+
+      minYear = Math.min(minYear, +year);
+      maxYear = Math.max(maxYear, ExperiensItem.dateEnd !== "UNTIL_NOW" ? +ExperiensItem.dateEnd.split(".")[1] : new Date().getFullYear());
+    } else {
+      const yearValue = years.get(year);
+      const newHeight = getHeight(
+        ExperiensItem.dateStart,
+        ExperiensItem.dateEnd
+      );
+      years.set(year, {
+        heightPerMonth: Math.max(yearValue.heightPerMonth, newHeight),
+        data: [...yearValue.data, ExperiensItem],
+      });
+    }
+    //key
+  }
+
+  const tempArr = [];
+  for (let n = minYear; n <= maxYear; n++) {
+    tempArr.push(n.toString());
+  }
+  timelineArray.value = tempArr;
+
+  return years;
+});
+
+function test(year) {
+  console.log("dataByYears", this.dataByYears.get("2018"));
+}
+
+function getStyles(data) {
+  const styles = {};
+
+  styles.top = `calc(${
+    ((data.dateStart.split(".")[0] - 1) / 12) * 100
+  }% + 4px)`;
+
+  if (data.type === "education") styles.right = "calc(50% + 20px)";
+  else styles.left = "calc(50% + 20px)";
+
+  const [monthStart, yearStart] = data.dateStart.split(".");
+  const [monthEnd, yearEnd] = data.dateEnd !== "UNTIL_NOW" ? data.dateEnd.split(".") : [new Date().getMonth().toString(), new Date().getFullYear().toString()];
+  console.log(monthEnd, yearEnd)
+  let height = 0;
+
+  if (yearStart === yearEnd) {
+    height =
+      height +
+      this.dataByYears.get(yearStart)?.heightPerMonth *
+        (monthEnd - monthStart + 1);
+  } else {
+    for (let year = +yearStart; year <= +yearEnd; year++) {
+      if (year === +yearStart) {
+        height =
+          height +
+          this.dataByYears.get(yearStart)?.heightPerMonth *
+            (12 - monthStart + 1);
+      } else if (year === +yearEnd) {
+        height =
+          height +
+          (this.dataByYears.get(yearEnd)?.heightPerMonth ?? 0.5) * (monthEnd - 1);
+      } else {
+        height =
+          height +
+          (this.dataByYears.get(year.toString())?.heightPerMonth ?? 0.5) * 12;
+      }
+    }
+  }
+
+  styles.height = `calc(${height}em - 8px)`;
+
+  return styles;
+}
+</script>
 
 <style lang="scss">
 .parent-block {
   position: relative;
-  /* display: grid;
-	grid-template-columns: auto 3em auto;
-	grid-template-rows: repeat(auto-fill, 200px);; */
-  /* padding-bottom: 150px; */
 }
 
-.time-block {}
+.time-block {
+}
 
 .time-segment {
   position: relative;
   display: flex;
   justify-content: center;
   width: 100%;
-  height: 250px;
 }
 
 .time-line {
   width: 20px;
   height: 100%;
-  border: 2px solid #fdfdfd;
-  border-color: #fdfdfd;
-  background-color: #181824;
+  border: 2px solid var(--color-text-primary);
+  background-color: var(--color-bg-primary);
 
   .time-segment:first-child & {
     border-top: none;
@@ -139,7 +233,7 @@ const timeArray = ref([
   top: 0;
   left: 50%;
   z-index: 10;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -147,23 +241,23 @@ const timeArray = ref([
   height: 4em;
   padding: 0.5em;
   border-radius: 15px;
-  border: 2px solid #fdfdfd;
-  background-color: #1d1d25;
+  border: 2px solid var(--color-text-primary);
+  background-color: var(--color-bg-secondary);
   font-weight: bold;
-  box-shadow: 0 0 0px 4px #181824;
-  color: #fdfdfd;
+  box-shadow: 0 0 0px 4px var(--color-bg-primary);
+  color: var(--color-text-primary);
 }
 
 .card {
   position: absolute;
+  z-index: 1;
   min-width: 35%;
   max-width: 45%;
-  padding: 1em 1.5em;
-  background-color: #13131d;
+  padding: 0.5em 1.5em;
+  background-color: var(--color-bg-secondary);
   border-radius: 15px;
-  color: #fdfdfd;
+  color: var(--color-text-primary);
   transition: transform 0.3s;
-  box-shadow: 0 0 0px 2px #181824;
   cursor: pointer;
 
   &:hover {
@@ -171,25 +265,14 @@ const timeArray = ref([
     transform: scale(1.065);
   }
 
-  .educations-container & {
-    right: calc(50% + 15px);
+  &--education {
     transform-origin: center right;
 
-    &:first-child {
-      border-radius: 0 0 15px 15px;
-      transform-origin: top right;
-    }
   }
-
-  .work-container & {
-    left: calc(50% + 15px);
+  &--work {
     transform-origin: center left;
-
-    &:last-child {
-      border-radius: 15px 15px 0 0;
-      transform-origin: bottom left;
-    }
   }
+
 
   .company-title,
   .education-title {
@@ -198,80 +281,26 @@ const timeArray = ref([
     font-weight: bold;
   }
 
-  .company-position {
-    margin: 0 0 0.5em;
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
 
   .education-speciality {
-    margin-bottom: 0.5em;
+    margin: 0 0 0.5em;
     font-size: 1rem;
     font-style: italic;
   }
 }
 
 
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
+.tempContainer {
   position: absolute;
-  cursor: pointer;
   top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+  z-index: 500;
+  width: 50px;
+  height: 100%;
 }
-
-.slider:before {
+.tempLine {
   position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked+.slider {
-  background-color: #2196F3;
-}
-
-input:focus+.slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked+.slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
+  width: 50px;
+  height: 2px;
+  background: red;
 }
 </style>
